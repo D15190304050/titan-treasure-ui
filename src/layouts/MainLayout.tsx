@@ -6,11 +6,17 @@ import
         Menu,
         Typography,
         theme,
+        Drawer,
+        Button,
+        Avatar,
+        Dropdown,
     } from 'antd';
 import
     {
+        HomeOutlined,
         UserOutlined,
         SettingOutlined,
+        MenuOutlined,
         LogoutOutlined,
         EnvironmentOutlined,
         LockOutlined,
@@ -18,7 +24,7 @@ import
     } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 
-const { Header, Sider, Content } = Layout;
+const { Sider, Content } = Layout;
 const { Title } = Typography;
 
 type MenuItem = Required<MenuProps>['items'][number];
@@ -26,7 +32,6 @@ type MenuItem = Required<MenuProps>['items'][number];
 const MainLayout: React.FC = () =>
 {
     const [collapsed, setCollapsed] = useState(false);
-    const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
     const {
@@ -65,11 +70,7 @@ const MainLayout: React.FC = () =>
 
     const handleMenuClick = ({ key }: { key: string }) =>
     {
-        if (key.startsWith('/'))
-        {
-            navigate(key);
-            setMobileDrawerOpen(false);
-        }
+        navigate(key);
     };
 
     const handleLogout = () =>
