@@ -107,7 +107,8 @@ const Register: React.FC = () => {
         throw new Error(presignedResponse.message || '获取上传地址失败');
       }
       
-      const uploadUrl = presignedResponse.data;
+      const { uploadUrl, objectUrl } = presignedResponse.data;
+      setAvatarUrl(objectUrl);
       
       // 2. 使用预签名URL上传到OSS
       // 在浏览器环境中，直接使用文件对象进行上传

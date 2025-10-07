@@ -1,15 +1,9 @@
 import { ServiceResponse, LoginRequest, LoginResponse, RegisterRequest } from '@/types';
+import { OssPresignedUrlResponse } from '@/types/registration';
 import axios from 'axios';
 import qs from "qs";
 
-// 获取头像上传的OSS预签名URL
-export interface OssPresignedUrlResponse {
-  uploadUrl: string;  // 上传到OSS的URL
-  objectUrl: string;  // 上传后的访问URL
-  expiresAt: string; // 过期时间
-}
-
-export async function getAvatarUploadUrl(fileName: string): Promise<ServiceResponse<string>> {
+export async function getAvatarUploadUrl(fileName: string): Promise<ServiceResponse<OssPresignedUrlResponse>> {
   const response = await axios.get('/api/profile/avatar/upload-url', { 
     params: {fileName},
     paramsSerializer: params => qs.stringify(params) 
