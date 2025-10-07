@@ -11,7 +11,9 @@ import {
   DatePicker, 
   Upload, 
   Row, 
-  Col 
+  Col,
+  Image,
+  Space
 } from 'antd';
 import { 
   UserOutlined, 
@@ -23,9 +25,12 @@ import {
   WomanOutlined,
   QuestionCircleOutlined
 } from '@ant-design/icons';
-import type { UploadProps } from 'antd';
+import type { UploadProps, UploadFile } from 'antd';
 import type { Dayjs } from 'dayjs';
+import { register } from '@/apis/auth';
 import { RegisterRequest } from '@/types';
+import { getAvatarUploadUrl, OssPresignedUrlResponse } from '@/apis/auth';
+import axios from 'axios';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -34,17 +39,27 @@ const Register: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
   const navigate = useNavigate();
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const [avatarUrl, setAvatarUrl] = useState<string>('');
 
   const onFinish = async (values: RegisterRequest) => {
     setLoading(true);
     try {
-      // TODO: 调用注册API
-      // const response = await register(values);
-      // 模拟API调用
-      setTimeout(() => {
+      // 构建注册请求数据
+      const registerData: RegisterRequest = {
+        ...values,
+        avatarUrl: avatarUrl || undefined
+      };
+      
+      // 调用注册API
+      const response = await register(registerData);
+      
+      if (response.success) {
         message.success('注册成功');
         navigate('/login');
-      }, 1000);
+      } else {
+        message.error(response.message || '注册失败');
+      }
     } catch (error) {
       message.error('注册失败，请稍后重试');
     } finally {
@@ -52,23 +67,96 @@ const Register: React.FC = () => {
     }
   };
 
+  const beforeUpload = (file: File) => {
+    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+    if (!isJpgOrPng) {
+      message.error('只能上传JPG或PNG格式的图片!');
+      return false;
+    }
+    
+    const isLt2M = file.size / 1024 / 1024 < 2;
+    if (!isLt2M) {
+      message.error('图片大小不能超过2MB!');
+      return false;
+    }
+    
+    return true;
+  };
+
+  const handleChange: UploadProps['onChange'] = async (info) => {
+    setFileList(info.fileList);
+    
+    if (info.file.status === 'done') {
+      message.success(`${info.file.name} 上传成功`);
+    } else if (info.file.status === 'error') {
+      message.error(`${info.file.name} 上传失败`);
+    }
+  };
+
+  // 自定义上传函数 - 使用OSS预签名URL
+  const customUpload = async (options: any) => {
+    const { file, onSuccess, onError } = options;
+    
+    try {
+      // 1. 获取OSS预签名URL
+      const fileName = `avatar_${Date.now()}_${file.name}`;
+      console.log("fileName = ", fileName);
+      const presignedResponse = await getAvatarUploadUrl(fileName);
+      
+      if (!presignedResponse.success) {
+        throw new Error(presignedResponse.message || '获取上传地址失败');
+      }
+      
+      const uploadUrl = presignedResponse.data;
+      
+      // 2. 使用预签名URL上传到OSS
+      // 在浏览器环境中，直接使用文件对象进行上传
+      const uploadResponse = await axios.put(uploadUrl, file, {
+        headers: {
+          'Content-Type': file.type,
+        },
+        onUploadProgress: (progressEvent) => {
+          const percent = progressEvent.total ? Math.round((progressEvent.loaded * 100) / progressEvent.total) : 0;
+          console.log(`上传进度: ${percent}%`);
+        }
+      });
+
+      console.log("uploadResponse = ", uploadResponse);
+      
+      if (uploadResponse.status === 200) {
+        // 3. 保存上传后的URL
+        setAvatarUrl("");
+        message.success('头像上传成功');
+        onSuccess(uploadResponse, file);
+      } else {
+        throw new Error('上传失败');
+      }
+      
+    } catch (error) {
+      console.error('头像上传失败:', error);
+      message.error('头像上传失败，请重试');
+      onError(error);
+    }
+  };
+
   const uploadProps: UploadProps = {
     name: 'avatar',
-    action: '/api/upload',
-    headers: {
-      authorization: 'authorization-text',
-    },
-    onChange(info) {
-      if (info.file.status !== 'uploading') {
-        console.log(info.file, info.fileList);
-      }
-      if (info.file.status === 'done') {
-        message.success(`${info.file.name} 上传成功`);
-      } else if (info.file.status === 'error') {
-        message.error(`${info.file.name} 上传失败`);
-      }
-    },
+    accept: '.jpg,.jpeg,.png',
+    beforeUpload,
+    onChange: handleChange,
+    listType: 'picture-card',
+    fileList,
+    maxCount: 1,
+    showUploadList: false,
+    customRequest: customUpload // 使用自定义上传函数
   };
+
+  const uploadButton = (
+    <div>
+      <UploadOutlined />
+      <div style={{ marginTop: 8 }}>上传头像</div>
+    </div>
+  );
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
@@ -88,9 +176,25 @@ const Register: React.FC = () => {
           <Row gutter={16}>
             <Col xs={24} sm={8}>
               <Form.Item label="头像">
-                <Upload {...uploadProps}>
-                  <Button icon={<UploadOutlined />}>上传头像</Button>
-                </Upload>
+                <Space direction="vertical" align="center" className="w-full">
+                  <Upload {...uploadProps}>
+                    {fileList.length > 0 ? (
+                      <Image
+                        src={avatarUrl || fileList[0].thumbUrl}
+                        alt="头像"
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        preview={{
+                          mask: <div style={{ color: '#fff' }}>点击查看</div>
+                        }}
+                      />
+                    ) : (
+                      uploadButton
+                    )}
+                  </Upload>
+                  <Text type="secondary" style={{ fontSize: '12px' }}>
+                    支持 JPG、PNG 格式，大小不超过2MB
+                  </Text>
+                </Space>
               </Form.Item>
             </Col>
             <Col xs={24} sm={16}>
