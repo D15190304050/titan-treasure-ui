@@ -42,7 +42,7 @@ export interface RegisterRequest {
   phoneNumberCountryCode?: string;
   phoneNumber?: string;
   gender: 0 | 1 | 2;
-  birthday?: string;
+  birthday?: number; // 毫秒级时间戳
   bio?: string;
 }
 

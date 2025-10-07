@@ -60,8 +60,12 @@ const Register: React.FC = () =>
             // 构建注册请求数据
             const registerData: RegisterRequest = {
                 ...values,
-                avatarUrl: avatarUrl || undefined
+                avatarUrl: avatarUrl || undefined,
+                // birthday: new Date(values.birthday || '').getTime() || undefined,
             };
+
+            console.log("registerData = ", registerData);
+            console.log("avatarUrl = ", avatarUrl);
 
             // 调用注册API
             const response = await register(registerData);
@@ -70,14 +74,17 @@ const Register: React.FC = () =>
             {
                 message.success('注册成功');
                 navigate('/login');
-            } else
+            }
+            else
             {
                 message.error(response.message || '注册失败');
             }
-        } catch (error)
+        }
+        catch (error)
         {
             message.error('注册失败，请稍后重试');
-        } finally
+        }
+        finally
         {
             setLoading(false);
         }
@@ -108,20 +115,16 @@ const Register: React.FC = () =>
 
         if (info.file.status === 'done')
         {
-            message.success(`${info.file.name} 上传成功`);
-        } else if (info.file.status === 'error')
-        {
-            message.error(`${info.file.name} 上传失败`);
-        }
-
-        if (info.file.status === 'done')
-        {
             // Get this url from response in real world.
             getBase64OfImage(info.file.originFileObj as File, (url: string) =>
             {
                 setLoading(false);
                 setImageUrl(url);
             });
+        }
+        else if (info.file.status === 'error')
+        {
+            message.error(`${info.file.name} 上传失败`);
         }
     };
 
@@ -143,7 +146,6 @@ const Register: React.FC = () =>
             }
 
             const { uploadUrl, objectUrl } = presignedResponse.data;
-            setAvatarUrl(objectUrl);
 
             // 2. 使用预签名URL上传到OSS
             // 在浏览器环境中，直接使用文件对象进行上传
@@ -163,7 +165,7 @@ const Register: React.FC = () =>
             if (uploadResponse.status === 200)
             {
                 // 3. 保存上传后的URL
-                setAvatarUrl("");
+                setAvatarUrl(objectUrl);
                 message.success('头像上传成功');
                 onSuccess(uploadResponse, file);
             } else
@@ -213,20 +215,12 @@ const Register: React.FC = () =>
                     layout="vertical"
                     scrollToFirstError
                 >
-                    <Row gutter={16}>
-                        <Col xs={24} sm={8}>
-                            <Form.Item label="头像">
-                                <Space direction="vertical" align="center" className="w-full">
+                    {/* 头像单独一行，居中显示 */}
+                    <Row justify="center" style={{ marginBottom: '16px' }}>
+                        <Col xs={24} sm={24} style={{ display: 'flex', justifyContent: 'center' }}>
+                            <Form.Item style={{ marginBottom: 0, textAlign: 'center' }}>
+                                <Space direction="vertical" align="center" style={{ maxWidth: '400px' }}>
                                     <Upload {...uploadProps}>
-                                        {/* {fileList.length > 0 ? (
-                                            <Image
-                                                src={avatarUrl || fileList[0].thumbUrl}
-                                                alt="头像"
-                                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                                            />
-                                        ) : (
-                                            uploadButton
-                                        )} */}
                                         {imageUrl ? (
                                             <img
                                                 src={imageUrl}
@@ -245,22 +239,11 @@ const Register: React.FC = () =>
                                 </Space>
                             </Form.Item>
                         </Col>
-                        <Col xs={24} sm={16}>
-                            <Form.Item
-                                name="email"
-                                label="邮箱"
-                                rules={[
-                                    { required: true, message: '请输入邮箱!' },
-                                    { type: 'email', message: '请输入有效的邮箱地址!' }
-                                ]}
-                            >
-                                <Input
-                                    prefix={<MailOutlined className="text-gray-400" />}
-                                    placeholder="邮箱"
-                                    size="large"
-                                />
-                            </Form.Item>
-                        </Col>
+                    </Row>
+                    
+                    {/* 邮箱单独一行，与其他表单项对齐 */}
+                    <Row>
+                        
                     </Row>
 
                     <Row gutter={16}>
@@ -284,22 +267,21 @@ const Register: React.FC = () =>
                         </Col>
                         <Col xs={24} sm={12}>
                             <Form.Item
-                                name="password"
-                                label="密码"
+                                name="email"
+                                label="邮箱"
                                 rules={[
-                                    { required: true, message: '请输入密码!' },
-                                    { min: 8, message: '密码至少8个字符!' },
-                                    { max: 20, message: '密码最多20个字符!' }
+                                    { required: true, message: '请输入邮箱!' },
+                                    { type: 'email', message: '请输入有效的邮箱地址!' }
                                 ]}
-                                hasFeedback
                             >
-                                <Input.Password
-                                    prefix={<LockOutlined className="text-gray-400" />}
-                                    placeholder="8-20个字符"
+                                <Input
+                                    prefix={<MailOutlined className="text-gray-400" />}
+                                    placeholder="邮箱"
                                     size="large"
                                 />
                             </Form.Item>
                         </Col>
+                        
                     </Row>
 
                     <Row gutter={16}>
@@ -321,9 +303,35 @@ const Register: React.FC = () =>
                         </Col>
                         <Col xs={24} sm={12}>
                             <Form.Item
+                                name="password"
+                                label="密码"
+                                rules={[
+                                    { required: true, message: '请输入密码!' },
+                                    { min: 8, message: '密码至少8个字符!' },
+                                    { max: 20, message: '密码最多20个字符!' },
+                                    { pattern: /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+={}\[\]:;"'<>,.?/~`-]).{8,20}$/, message: '密码必须包含字母、数字和特殊字符!' }
+                                ]}
+                                hasFeedback
+                            >
+                                <Input.Password
+                                    prefix={<LockOutlined className="text-gray-400" />}
+                                    placeholder="8-20个字符,包含字母、数字和特殊字符"
+                                    size="large"
+                                />
+                            </Form.Item>
+                        </Col>
+                        
+                    </Row>
+
+                    <Row gutter={16}>
+                        <Col xs={24} sm={12}>
+                            <Form.Item
                                 name="phoneNumber"
                                 label="手机号"
-                                rules={[{ required: true, message: '请输入手机号!' }]}
+                                rules={[
+                                    { required: true, message: '请输入手机号!' },
+                                    { pattern: /^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/, message: '请输入正确的手机号格式!' }
+                                ]}
                             >
                                 <Input
                                     prefix={<PhoneOutlined className="text-gray-400" />}
@@ -332,9 +340,6 @@ const Register: React.FC = () =>
                                 />
                             </Form.Item>
                         </Col>
-                    </Row>
-
-                    <Row gutter={16}>
                         <Col xs={24} sm={12}>
                             <Form.Item
                                 name="gender"
@@ -347,10 +352,13 @@ const Register: React.FC = () =>
                                 >
                                     <Option value={1}><ManOutlined /> 男</Option>
                                     <Option value={2}><WomanOutlined /> 女</Option>
-                                    <Option value={0}><QuestionCircleOutlined /> 未知</Option>
+                                    <Option value={0}><QuestionCircleOutlined /> 保密</Option>
                                 </Select>
                             </Form.Item>
                         </Col>
+                    </Row>
+
+                    <Row>
                         <Col xs={24} sm={12}>
                             <Form.Item
                                 name="birthday"

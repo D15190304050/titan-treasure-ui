@@ -19,7 +19,7 @@ export async function login(request: LoginRequest): Promise<ServiceResponse<Logi
 
 // 注册
 export async function register(request: RegisterRequest): Promise<ServiceResponse<boolean>> {
-  const response = await axios.post('/api/profile/register', request);
+  const response = await axios.post('/api/profile/profile/register', request);
   return response.data;
 }
 
