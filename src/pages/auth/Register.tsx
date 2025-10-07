@@ -26,10 +26,9 @@ import {
   QuestionCircleOutlined
 } from '@ant-design/icons';
 import type { UploadProps, UploadFile } from 'antd';
-import type { Dayjs } from 'dayjs';
 import { register } from '@/apis/auth';
 import { RegisterRequest } from '@/types';
-import { getAvatarUploadUrl, OssPresignedUrlResponse } from '@/apis/auth';
+import { getAvatarUploadUrl } from '@/apis/auth';
 import axios from 'axios';
 
 const { Title, Text } = Typography;
