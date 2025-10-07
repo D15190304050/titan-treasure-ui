@@ -183,9 +183,6 @@ const Register: React.FC = () => {
                         src={avatarUrl || fileList[0].thumbUrl}
                         alt="头像"
                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                        preview={{
-                          mask: <div style={{ color: '#fff' }}>点击查看</div>
-                        }}
                       />
                     ) : (
                       uploadButton
