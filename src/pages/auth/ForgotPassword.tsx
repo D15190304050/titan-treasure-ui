@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Form, Input, Button, Typography, Card, message, Steps } from 'antd';
 import { MailOutlined, LockOutlined, SafetyCertificateOutlined } from '@ant-design/icons';
-import { LoginResponse } from '@/types';
+import { LoginStateTokenInfo } from '@/types';
 
 const { Title, Text } = Typography;
 const { Step } = Steps;

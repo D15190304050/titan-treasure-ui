@@ -1,4 +1,4 @@
-import { ServiceResponse, LoginRequest, LoginResponse, RegisterRequest } from '@/types';
+import { ServiceResponse, LoginRequest, LoginStateTokenInfo, RegisterRequest } from '@/types';
 import { OssPresignedUrlResponse } from '@/types/registration';
 import axios from 'axios';
 import qs from "qs";
@@ -12,8 +12,8 @@ export async function getAvatarUploadUrl(fileName: string): Promise<ServiceRespo
 }
 
 // 登录
-export async function login(request: LoginRequest): Promise<ServiceResponse<LoginResponse>> {
-  const response = await axios.post('/api/profile/login', request);
+export async function login(request: LoginRequest): Promise<ServiceResponse<LoginStateTokenInfo>> {
+  const response = await axios.post('/api/iam/login', request);
   return response.data;
 }
 
