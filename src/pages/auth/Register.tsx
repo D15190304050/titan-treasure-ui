@@ -64,9 +64,6 @@ const Register: React.FC = () =>
                 // birthday: new Date(values.birthday || '').getTime() || undefined,
             };
 
-            console.log("registerData = ", registerData);
-            console.log("avatarUrl = ", avatarUrl);
-
             // 调用注册API
             const response = await register(registerData);
 
