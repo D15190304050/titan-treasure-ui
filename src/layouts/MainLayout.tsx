@@ -6,25 +6,21 @@ import
         Menu,
         Typography,
         theme,
-        Drawer,
         Button,
-        Avatar,
-        Dropdown,
     } from 'antd';
 import
     {
-        HomeOutlined,
         UserOutlined,
         SettingOutlined,
-        MenuOutlined,
-        LogoutOutlined,
         EnvironmentOutlined,
         LockOutlined,
         EyeInvisibleOutlined,
+        LogoutOutlined,
     } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
+import AuthKeys from '@/constants/AuthConstants';
 
-const { Sider, Content } = Layout;
+const { Sider, Content, Header } = Layout;
 const { Title } = Typography;
 
 type MenuItem = Required<MenuProps>['items'][number];
@@ -76,32 +72,9 @@ const MainLayout: React.FC = () =>
     const handleLogout = () =>
     {
         // TODO: 实现登出逻辑
+        localStorage.removeItem(AuthKeys.AccessToken);
         navigate('/login');
     };
-
-    const userMenuItems: MenuProps['items'] = [
-        {
-            key: 'profile',
-            label: '个人资料',
-            icon: <UserOutlined />,
-            onClick: () => navigate('/profile'),
-        },
-        {
-            key: 'settings',
-            label: '设置',
-            icon: <SettingOutlined />,
-            onClick: () => navigate('/settings/security'),
-        },
-        {
-            type: 'divider',
-        },
-        {
-            key: 'logout',
-            label: '退出登录',
-            icon: <LogoutOutlined />,
-            onClick: handleLogout,
-        },
-    ];
 
     const siderContent = (
         <div className="h-full flex flex-col">
@@ -142,6 +115,26 @@ const MainLayout: React.FC = () =>
 
             {/* 主内容区域 - 添加左侧间距避免被侧边栏遮挡 */}
             <Layout className="lg:ml-60 min-h-screen">
+                <Header
+                    style={{
+                        background: colorBgContainer,
+                        padding: '0 16px',
+                        display: 'flex',
+                        justifyContent: 'flex-end',
+                        alignItems: 'center',
+                        height: '64px',
+                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+                    }}
+                >
+                    <Button 
+                        type="text" 
+                        icon={<LogoutOutlined />} 
+                        onClick={handleLogout}
+                        size="large"
+                    >
+                        注销登录
+                    </Button>
+                </Header>
                 <Content
                     style={{
                         margin: '16px',
@@ -149,7 +142,7 @@ const MainLayout: React.FC = () =>
                         background: colorBgContainer,
                         borderRadius: borderRadiusLG,
                         overflow: 'auto',
-                        height: 'calc(100vh - 64px)', // 减去header高度
+                        height: 'calc(100vh - 64px - 64px)', // 减去header高度和自身margin
                     }}
                 >
                     <Outlet />
