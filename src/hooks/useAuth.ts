@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import { useUserStore } from '@/stores/userStore';
+import { useUserSessionStore } from '@/stores/userStore';
 
 // 自定义Hook用于处理认证状态
 export const useAuth = () =>
 {
-    const { user, token, isAuthenticated, setIsAuthenticated } = useUserStore();
+    const { user, token, isAuthenticated, setIsAuthenticated } = useUserSessionStore();
     const [loading, setLoading] = useState(true);
 
     useEffect(() =>

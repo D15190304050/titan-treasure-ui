@@ -12,7 +12,7 @@ interface UserSession
     logout: () => void;
 }
 
-export const useUserStore = create<UserSession>((set) => ({
+export const useUserSessionStore = create<UserSession>((set) => ({
     user: null,
     token: localStorage.getItem('token'),
     isAuthenticated: !!localStorage.getItem('token'),
