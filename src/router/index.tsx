@@ -20,58 +20,58 @@ import AccountSecurity from '@/pages/settings/AccountSecurity';
 import PrivacySettings from '@/pages/settings/PrivacySettings';
 
 export const router = createBrowserRouter([
-  {
-    path: '/',
-    element: <MainLayout />,
-    children: [
-      {
-        index: true,
-        element: <Navigate to="/profile" replace />,
-      },
-      // Auth routes
-      {
-        path: 'login',
-        element: <Login />,
-      },
-      {
-        path: 'register',
-        element: <Register />,
-      },
-      {
-        path: 'forgot-password',
-        element: <ForgotPassword />,
-      },
-      // Profile routes
-      {
-        path: 'profile',
-        element: <Profile />,
-      },
-      {
-        path: 'profile/edit',
-        element: <EditProfile />,
-      },
-      // Address routes
-      {
-        path: 'address',
-        element: <AddressList />,
-      },
-      {
-        path: 'address/add',
-        element: <AddAddress />,
-      },
-      {
-        path: 'address/edit/:id',
-        element: <EditAddress />,
-      },
-      // Settings routes
-      {
-        path: 'settings/security',
-        element: <AccountSecurity />,
-      },
-      {
-        path: 'settings/privacy',
-        element: <PrivacySettings />,
-      },
-    ],
-  },
+    {
+        path: '/',
+        element: <MainLayout />,
+        children: [
+            {
+                index: true,
+                element: <Navigate to="/profile" replace />,
+            },
+            // Auth routes
+            {
+                path: 'login',
+                element: <Login />,
+            },
+            {
+                path: 'register',
+                element: <Register />,
+            },
+            {
+                path: 'forgot-password',
+                element: <ForgotPassword />,
+            },
+            // Profile routes
+            {
+                path: 'profile',
+                element: <Profile />,
+            },
+            {
+                path: 'profile/edit',
+                element: <EditProfile />,
+            },
+            // Address routes
+            {
+                path: 'address',
+                element: <AddressList />,
+            },
+            {
+                path: 'address/add',
+                element: <AddAddress />,
+            },
+            {
+                path: 'address/edit/:id',
+                element: <EditAddress />,
+            },
+            // Settings routes
+            {
+                path: 'settings/security',
+                element: <AccountSecurity />,
+            },
+            {
+                path: 'settings/privacy',
+                element: <PrivacySettings />,
+            },
+        ],
+    },
 ]);
