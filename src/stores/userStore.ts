@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { User } from '@/types';
 
-interface UserState
+interface UserSession
 {
     user: User | null;
     token: string | null;
@@ -12,7 +12,7 @@ interface UserState
     logout: () => void;
 }
 
-export const useUserStore = create<UserState>((set) => ({
+export const useUserStore = create<UserSession>((set) => ({
     user: null,
     token: localStorage.getItem('token'),
     isAuthenticated: !!localStorage.getItem('token'),
@@ -22,7 +22,8 @@ export const useUserStore = create<UserState>((set) => ({
         if (token)
         {
             localStorage.setItem('token', token);
-        } else
+        }
+        else
         {
             localStorage.removeItem('token');
         }
