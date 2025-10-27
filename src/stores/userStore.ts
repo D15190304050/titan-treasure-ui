@@ -1,12 +1,13 @@
 import { create } from 'zustand';
-import { User } from '@/types';
+import { UserInfo } from '@/types';
+import AuthKeys from '@/constants/AuthConstants';
 
 interface UserSession
 {
-    user: User | null;
+    user: UserInfo | null;
     token: string | null;
     isAuthenticated: boolean;
-    setUser: (user: User | null) => void;
+    setUser: (user: UserInfo | null) => void;
     setToken: (token: string | null) => void;
     setIsAuthenticated: (isAuthenticated: boolean) => void;
     logout: () => void;
@@ -14,25 +15,25 @@ interface UserSession
 
 export const useUserSessionStore = create<UserSession>((set) => ({
     user: null,
-    token: localStorage.getItem('token'),
-    isAuthenticated: !!localStorage.getItem('token'),
+    token: localStorage.getItem(AuthKeys.AccessToken),
+    isAuthenticated: false,
     setUser: (user) => set({ user }),
     setToken: (token) =>
     {
         if (token)
         {
-            localStorage.setItem('token', token);
+            localStorage.setItem(AuthKeys.AccessToken, token);
         }
         else
         {
-            localStorage.removeItem('token');
+            localStorage.removeItem(AuthKeys.AccessToken);
         }
         set({ token });
     },
     setIsAuthenticated: (isAuthenticated) => set({ isAuthenticated }),
     logout: () =>
     {
-        localStorage.removeItem('token');
+        localStorage.removeItem(AuthKeys.AccessToken);
         set({ user: null, token: null, isAuthenticated: false });
     },
 }));

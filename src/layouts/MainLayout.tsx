@@ -19,6 +19,7 @@ import
     } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import AuthKeys from '@/constants/AuthConstants';
+import Authenticated from '@/components/Authenticated';
 
 const { Sider, Content, Header } = Layout;
 const { Title } = Typography;
@@ -98,57 +99,59 @@ const MainLayout: React.FC = () =>
     );
 
     return (
-        <Layout className="min-h-screen">
-            {/* 桌面端侧边栏 - 固定在左侧 */}
-            <Sider
-                collapsible
-                collapsed={collapsed}
-                onCollapse={setCollapsed}
-                className="hidden lg:block shadow-lg fixed left-0 top-0 h-screen"
-                width={240}
-                style={{
-                    background: colorBgContainer,
-                }}
-            >
-                {siderContent}
-            </Sider>
+        <Authenticated>
+            <Layout className="min-h-screen">
+                {/* 桌面端侧边栏 - 固定在左侧 */}
+                <Sider
+                    collapsible
+                    collapsed={collapsed}
+                    onCollapse={setCollapsed}
+                    className="hidden lg:block shadow-lg fixed left-0 top-0 h-screen"
+                    width={240}
+                    style={{
+                        background: colorBgContainer,
+                    }}
+                >
+                    {siderContent}
+                </Sider>
 
-            {/* 主内容区域 - 添加左侧间距避免被侧边栏遮挡 */}
-            <Layout className="lg:ml-60 min-h-screen">
-                <Header
-                    style={{
-                        background: colorBgContainer,
-                        padding: '0 16px',
-                        display: 'flex',
-                        justifyContent: 'flex-end',
-                        alignItems: 'center',
-                        height: '64px',
-                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-                    }}
-                >
-                    <Button 
-                        type="text" 
-                        icon={<LogoutOutlined />} 
-                        onClick={handleLogout}
-                        size="large"
+                {/* 主内容区域 - 添加左侧间距避免被侧边栏遮挡 */}
+                <Layout className="lg:ml-60 min-h-screen">
+                    <Header
+                        style={{
+                            background: colorBgContainer,
+                            padding: '0 16px',
+                            display: 'flex',
+                            justifyContent: 'flex-end',
+                            alignItems: 'center',
+                            height: '64px',
+                            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+                        }}
                     >
-                        注销登录
-                    </Button>
-                </Header>
-                <Content
-                    style={{
-                        margin: '16px',
-                        padding: '24px',
-                        background: colorBgContainer,
-                        borderRadius: borderRadiusLG,
-                        overflow: 'auto',
-                        height: 'calc(100vh - 64px - 64px)', // 减去header高度和自身margin
-                    }}
-                >
-                    <Outlet />
-                </Content>
+                        <Button 
+                            type="text" 
+                            icon={<LogoutOutlined />} 
+                            onClick={handleLogout}
+                            size="large"
+                        >
+                            注销登录
+                        </Button>
+                    </Header>
+                    <Content
+                        style={{
+                            margin: '16px',
+                            padding: '24px',
+                            background: colorBgContainer,
+                            borderRadius: borderRadiusLG,
+                            overflow: 'auto',
+                            height: 'calc(100vh - 64px - 64px)', // 减去header高度和自身margin
+                        }}
+                    >
+                        <Outlet />
+                    </Content>
+                </Layout>
             </Layout>
-        </Layout>
+        </Authenticated>
     );
 };
 

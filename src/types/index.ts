@@ -57,6 +57,14 @@ export interface LoginStateTokenInfo
     expirationInSeconds: number;
 }
 
+export interface UserInfo
+{
+    id: number;
+    username: string;
+    nickname: string;
+    authorities: string[];
+}
+
 export interface ServiceResponse<TData>
 {
     code: number;
