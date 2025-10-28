@@ -5,6 +5,7 @@ import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { LoginRequest, LoginStateTokenInfo, ServiceResponse } from '@/types';
 import { login } from '@/apis/auth';
 import AuthKeys from '@/constants/AuthConstants';
+import { useUserSessionStore } from '@/stores/userStore';
 
 const { Title, Text } = Typography;
 
@@ -40,8 +41,11 @@ const Login: React.FC = () =>
             // 同时，也可以防止CSRF攻击，因为HTTP-only Cookie不能被跨站脚本攻击利用
             const loginStateTokenInfo: LoginStateTokenInfo = loginStateTokenInfoResponse.data;
             localStorage.setItem(AuthKeys.AccessToken, loginStateTokenInfo.accessToken);
-            // localStorage.setItem('refreshToken', loginStateTokenInfo.refreshToken);
-            // localStorage.setItem('expirationInSeconds', loginStateTokenInfo.expirationInSeconds.toString());
+            
+            // 同时更新zustand store中的认证状态
+            const { setToken, setIsAuthenticated } = useUserSessionStore.getState();
+            setToken(loginStateTokenInfo.accessToken);
+            setIsAuthenticated(true);
 
             // 登录成功后跳转到个人资料页面
             navigate('/profile');

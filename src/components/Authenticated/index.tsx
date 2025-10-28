@@ -15,8 +15,19 @@ const Authenticated: React.FC<AuthenticatedProps> = ({ children }) =>
     const navigate = useNavigate();
     const { token, isAuthenticated } = useUserSessionStore();
 
+    // 定义不需要认证的公共路径
+    const publicPaths = ['/login', '/register', '/forgot-password'];
+
     useEffect(() =>
     {
+        // 检查当前路径是否为公共路径
+        const isPublicPath = publicPaths.includes(location.pathname);
+        
+        // 如果是公共路径，直接渲染子组件，不进行认证检查
+        if (isPublicPath) {
+            return;
+        }
+
         if (!isAuthenticated)
         {
             // 检查是否有token
@@ -41,19 +52,21 @@ const Authenticated: React.FC<AuthenticatedProps> = ({ children }) =>
                     else
                     {
                         // Token 无效，重定向到登录页
+                        console.log("Invalid token, redirect to login, message: ", response.message);
                         navigate(AuthKeys.LoginUrl, { replace: true });
                     }
                 })
-                .catch(() =>
+                .catch(error =>
                 {
                     // 网络错误或其他异常，重定向到登录页
+                    console.log("Error validating token, redirect to login, error: ", error);
                     navigate(AuthKeys.LoginUrl, { replace: true });
                 });
         }
-    }, [isAuthenticated, location.pathname, navigate]);
+    }, [isAuthenticated, location.pathname]);
 
-    // 只有认证通过才渲染子组件
-    return isAuthenticated ? <>{children}</> : null;
+    // 对于公共路径或者已认证的用户，渲染子组件
+    return isAuthenticated || publicPaths.includes(location.pathname) ? <>{children}</> : null;
 };
 
 export default Authenticated;

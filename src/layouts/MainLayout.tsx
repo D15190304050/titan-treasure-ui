@@ -74,7 +74,7 @@ const MainLayout: React.FC = () =>
     {
         // TODO: 实现登出逻辑
         localStorage.removeItem(AuthKeys.AccessToken);
-        navigate('/login');
+        navigate(AuthKeys.LoginUrl, { replace: true });
     };
 
     const siderContent = (
