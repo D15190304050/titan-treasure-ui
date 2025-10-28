@@ -1,6 +1,7 @@
 import axios, { AxiosInstance } from "axios";
 
 import AuthKeys from "../constants/AuthConstants";
+import { useUserSessionStore } from "@/stores/userStore";
 
 const axiosWithInterceptor: AxiosInstance = axios.create({
     timeout: 1000 * 60 * 5,
@@ -18,6 +19,14 @@ axiosWithInterceptor.interceptors.request.use(
         const token: string | null = localStorage.getItem(AuthKeys.AccessToken);
         if (token)
             config.headers["Authorization"] = token;
+
+        const { user } = useUserSessionStore.getState();
+        if (user)
+        {
+            config.headers[AuthKeys.HeaderUserId] = user.id;
+            config.headers[AuthKeys.HeaderUserName] = user.username;
+            config.headers[AuthKeys.HeaderUserNickname] = user.nickname;
+        }
 
         return config;
     },

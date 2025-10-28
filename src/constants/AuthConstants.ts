@@ -4,6 +4,9 @@ const AuthKeys = {
     ExpirationInSeconds: 'expiration_in_seconds',
     LoginUrl: '/login',
     RedirectUrl: 'redirect',
+    HeaderUserId: "X-User-Id",
+    HeaderUserName: "X-User-Name",
+    HeaderUserNickname: "X-User-Nickname",
 }
 
 export default AuthKeys;
