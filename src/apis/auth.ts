@@ -3,6 +3,8 @@ import { OssPresignedUrlResponse } from '@/types/registration';
 import axios from 'axios';
 import qs from "qs";
 
+const viteEnv = import.meta.env;
+
 export async function getAvatarUploadUrl(fileName: string): Promise<ServiceResponse<OssPresignedUrlResponse>>
 {
     const response = await axios.get('/api/profile/avatar/upload-url', {
@@ -15,14 +17,14 @@ export async function getAvatarUploadUrl(fileName: string): Promise<ServiceRespo
 // 登录
 export async function login(request: LoginRequest): Promise<ServiceResponse<LoginStateTokenInfo>>
 {
-    const response = await axios.post('/api/iam/login', request);
+    const response = await axios.post(viteEnv.VITE_IAM_BASE_URL + '/login', request);
     return response.data;
 }
 
 // Validate token, if valid, return UserInfo, else return null.
 export async function validateToken(token: string): Promise<ServiceResponse<UserInfo>>
 {
-    const response = await axios.post('/api/iam/sso/verify-token', { token }, {
+    const response = await axios.post(viteEnv.VITE_IAM_BASE_URL + '/sso/verify-token', { token }, {
         headers: {
             "Authorization": token
         }
