@@ -134,7 +134,7 @@ const Register: React.FC = () =>
         {
             // 1. 获取OSS预签名URL
             const fileName = `avatar_${Date.now()}_${file.name}`;
-            console.log("fileName = ", fileName);
+            // console.log("fileName = ", fileName);
             const presignedResponse = await getAvatarUploadUrl(fileName);
 
             if (!presignedResponse.success)

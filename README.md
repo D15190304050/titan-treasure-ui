@@ -123,12 +123,12 @@ npm run preview
 
 ### 认证相关
 - `POST /api/iam/login` - 用户登录
-- `POST /api/profile/profile/register` - 用户注册
+- `POST /api/profile/register` - 用户注册
 
 ### 用户相关
-- `GET /api/profile/me` - 获取当前用户信息
-- `PUT /api/profile/me` - 更新用户信息
-- `POST /api/profile/change-password` - 修改密码
+- `GET /api/me` - 获取当前用户信息
+- `PUT /api/me` - 更新用户信息
+- `POST /api/change-password` - 修改密码
 
 ### 地址相关
 - `GET /api/address/list` - 获取地址列表
