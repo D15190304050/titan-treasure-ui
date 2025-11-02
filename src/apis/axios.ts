@@ -3,8 +3,8 @@ import axios, { AxiosInstance } from "axios";
 import AuthKeys from "../constants/AuthConstants";
 import { useUserSessionStore } from "@/stores/userStore";
 
-const isDev: boolean = import.meta.env.isDev;
-console.log("isDev:", isDev);
+// const isDev: boolean = import.meta.env.VITE_IS_DEV;
+// console.log("isDev:", isDev);
 
 const axiosWithInterceptor: AxiosInstance = axios.create({
     timeout: 1000 * 60 * 5,
@@ -31,11 +31,11 @@ axiosWithInterceptor.interceptors.request.use(
             config.headers[AuthKeys.HeaderUserNickname] = user.nickname;
         }
 
-        if (isDev)
-        {
-            config.headers["Host"] = import.meta.env.VITE_API_URL;
-            console.log("Request:", config);
-        }
+        // if (isDev)
+        // {
+        //     config.headers["Host"] = import.meta.env.VITE_API_URL;
+        //     console.log("Request:", config);
+        // }
 
         return config;
     },
