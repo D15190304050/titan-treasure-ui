@@ -146,16 +146,24 @@ const Profile: React.FC = () =>
                         className="flex-shrink-0"
                     />
                     <div className="flex-1 text-center md:text-left">
-                        <Title level={3} className="mb-2">{user.nickname}</Title>
-                        <Text type="secondary" className="block mb-4">@{user.username}</Text>
-                        <Text className="block mb-4">{user.bio || '暂无个人简介'}</Text>
-                        <Button
-                            type="primary"
-                            icon={<EditOutlined />}
-                            onClick={handleEditProfile}
-                        >
-                            编辑资料
-                        </Button>
+                        <div className="mb-2">
+                            <Title level={3} className="mb-0">{user.nickname}</Title>
+                        </div>
+                        <div className="mb-2">
+                            <Text type="secondary">@{user.username}</Text>
+                        </div>
+                        <div className="mb-4">
+                            <Text>{user.bio || '暂无个人简介'}</Text>
+                        </div>
+                        <div>
+                            <Button
+                                type="primary"
+                                icon={<EditOutlined />}
+                                onClick={handleEditProfile}
+                            >
+                                编辑资料
+                            </Button>
+                        </div>
                     </div>
                 </div>
             </Card>
