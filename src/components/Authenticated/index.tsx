@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useUserSessionStore } from '@/stores/userStore';
 import AuthKeys from '@/constants/AuthConstants';
@@ -14,13 +14,20 @@ const Authenticated: React.FC<AuthenticatedProps> = ({ children }) =>
     const location = useLocation();
     const navigate = useNavigate();
     const { token, isAuthenticated } = useUserSessionStore();
+    const hasValidatedToken = useRef(false);
 
     // 定义不需要认证的公共路径
     const publicPaths = ['/login', '/register', '/forgot-password'];
 
     useEffect(() =>
     {
+        // 防止在React Strict Mode下重复调用API
+        if (hasValidatedToken.current) {
+            return;
+        }
+        
         // 检查当前路径是否为公共路径
+        console.log("Current pathname: ", location.pathname);
         const isPublicPath = publicPaths.includes(location.pathname);
         
         // 如果是公共路径，直接渲染子组件，不进行认证检查
@@ -38,6 +45,9 @@ const Authenticated: React.FC<AuthenticatedProps> = ({ children }) =>
                 return;
             }
 
+            // 标记token验证已开始
+            hasValidatedToken.current = true;
+            
             // Validate token.
             validateToken(token)
                 .then(response =>

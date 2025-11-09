@@ -18,6 +18,7 @@ import EditAddress from '@/pages/address/EditAddress';
 // Settings pages
 import AccountSecurity from '@/pages/settings/AccountSecurity';
 import PrivacySettings from '@/pages/settings/PrivacySettings';
+import OAuth2Callback from '@/pages/auth/OAuth2Callback';
 
 export const router = createBrowserRouter([
     {
@@ -40,6 +41,10 @@ export const router = createBrowserRouter([
             {
                 path: 'forgot-password',
                 element: <ForgotPassword />,
+            },
+            {
+                path: 'oauth2/callback',
+                element: <OAuth2Callback />,
             },
             // Profile routes
             {

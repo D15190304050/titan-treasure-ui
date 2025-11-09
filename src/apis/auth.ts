@@ -24,7 +24,7 @@ export async function login(request: LoginRequest): Promise<ServiceResponse<Logi
 // Validate token, if valid, return UserInfo, else return null.
 export async function validateToken(token: string): Promise<ServiceResponse<UserInfo>>
 {
-    const response = await axiosWithInterceptor.post(viteEnv.VITE_IAM_BASE_URL + '/sso/verify-token', { token }, {
+    const response = await axiosWithInterceptor.post(viteEnv.VITE_IAM_BASE_URL + '/sso/validate-token', { token }, {
         headers: {
             "Authorization": token
         }

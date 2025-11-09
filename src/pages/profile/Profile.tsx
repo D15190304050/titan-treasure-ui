@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import
     {
@@ -32,9 +32,17 @@ const Profile: React.FC = () =>
     const [user, setUser] = useState<FullUserProfileInfo | null>(null);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
+    const hasFetchedProfile = useRef(false);
 
     useEffect(() =>
     {
+        // 防止在React Strict Mode下重复调用API
+        if (hasFetchedProfile.current) {
+            return;
+        }
+        
+        hasFetchedProfile.current = true;
+        
         const fetchProfileInfo = async () =>
         {
             try

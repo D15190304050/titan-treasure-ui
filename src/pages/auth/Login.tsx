@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Form, Input, Button, Checkbox, Typography, Card, message } from 'antd';
-import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import { Form, Input, Button, Typography, Card, message, Divider } from 'antd';
+import { UserOutlined, LockOutlined, GithubOutlined } from '@ant-design/icons';
 import { LoginRequest, LoginStateTokenInfo, ServiceResponse } from '@/types';
 import { login } from '@/apis/auth';
 import AuthKeys from '@/constants/AuthConstants';
@@ -14,6 +14,7 @@ const Login: React.FC = () =>
 {
     // 状态管理：控制登录按钮的加载状态
     const [loading, setLoading] = useState(false);
+    const [githubLoading, setGithubLoading] = useState(false);
     // 路由导航钩子，用于页面跳转
     const navigate = useNavigate();
 
@@ -24,6 +25,12 @@ const Login: React.FC = () =>
         setLoading(true);
         try
         {
+            // Clear previous login state.
+            localStorage.removeItem(AuthKeys.AccessToken);
+            const { setToken, setIsAuthenticated } = useUserSessionStore.getState();
+            setToken(null);
+            setIsAuthenticated(false);
+
             // 调用登录API接口
             const loginStateTokenInfoResponse: ServiceResponse<LoginStateTokenInfo> = await login(values);
 
@@ -41,12 +48,9 @@ const Login: React.FC = () =>
             // 同时，也可以防止CSRF攻击，因为HTTP-only Cookie不能被跨站脚本攻击利用
             const loginStateTokenInfo: LoginStateTokenInfo = loginStateTokenInfoResponse.data;
             localStorage.setItem(AuthKeys.AccessToken, loginStateTokenInfo.accessToken);
-            
-            // 同时更新zustand store中的认证状态
-            const { setToken, setIsAuthenticated } = useUserSessionStore.getState();
             setToken(loginStateTokenInfo.accessToken);
-            setIsAuthenticated(true);
 
+            // Jump to /profile page directly, the <Authenticated> component will validate the token.
             // 登录成功后跳转到个人资料页面
             navigate('/profile');
         }
@@ -61,6 +65,76 @@ const Login: React.FC = () =>
             setLoading(false);
         }
     };
+
+    // GitHub OAuth2登录处理函数
+    const handleGithubLogin = () =>
+    {
+        // 设置加载状态为true，显示加载动画
+        setGithubLoading(true);
+        
+        const width = 500;
+        const height = 600;
+        const left = window.screen.width / 2 - width / 2;
+        const top = window.screen.height / 2 - height / 2;
+
+        const authWindow = window.open(
+            'http://localhost:23651/oauth2/authorization/github',
+            'GitHub Login',
+            `width=${width},height=${height},left=${left},top=${top}`
+        );
+
+        // 监听消息
+        const handleMessage = (event: MessageEvent) => {
+            if (event.origin !== window.location.origin) return; // 安全检查
+
+            if (event.data.type === 'AUTH_SUCCESS') {
+                const token = event.data.token;
+                localStorage.setItem(AuthKeys.AccessToken, token);
+                
+                // 同时更新zustand store中的认证状态
+                const { setToken, setIsAuthenticated } = useUserSessionStore.getState();
+                setToken(token);
+                setIsAuthenticated(true);
+                
+                // 关闭加载状态
+                setGithubLoading(false);
+                
+                // 登录成功后跳转到个人资料页面
+                navigate('/profile');
+                
+                // 关闭授权窗口
+                authWindow?.close();
+                
+                // 移除事件监听器
+                window.removeEventListener('message', handleMessage);
+            } else if (event.data.type === 'AUTH_ERROR') {
+                message.error('登录失败：' + event.data.message);
+                setGithubLoading(false);
+                authWindow?.close();
+                window.removeEventListener('message', handleMessage);
+            }
+        };
+
+        window.addEventListener('message', handleMessage);
+
+        // 防止多次监听
+        authWindow?.focus();
+
+        // 设置超时关闭弹窗
+        setTimeout(() => {
+            if (!localStorage.getItem(AuthKeys.AccessToken)) {
+                authWindow?.close();
+                if (githubLoading) {
+                    message.error('登录超时，请重试');
+                    setGithubLoading(false);
+                }
+            }
+            // 移除事件监听器
+            window.removeEventListener('message', handleMessage);
+        }, 120 * 1000); // 120秒超时
+    };
+
+
 
     // 渲染登录表单UI
     return (
@@ -123,6 +197,20 @@ const Login: React.FC = () =>
                             loading={loading} // 绑定加载状态
                         >
                             登录
+                        </Button>
+                    </Form.Item>
+                    
+                    {/* GitHub OAuth2登录按钮 */}
+                    <Form.Item>
+                        <Divider plain>或</Divider>
+                        <Button
+                            icon={<GithubOutlined />}
+                            onClick={handleGithubLogin}
+                            className="w-full"
+                            size="large"
+                            loading={githubLoading}
+                        >
+                            使用 GitHub 登录
                         </Button>
                     </Form.Item>
                 </Form>
