@@ -17,14 +17,14 @@ const Authenticated: React.FC<AuthenticatedProps> = ({ children }) =>
     const hasValidatedToken = useRef(false);
 
     // 定义不需要认证的公共路径
-    const publicPaths = ['/login', '/register', '/forgot-password'];
+    const publicPaths = ['/login', '/register', '/forgot-password', '/oauth2/**'];
 
     useEffect(() =>
     {
         // 防止在React Strict Mode下重复调用API
-        if (hasValidatedToken.current) {
-            return;
-        }
+        // if (hasValidatedToken.current) {
+        //     return;
+        // }
         
         // 检查当前路径是否为公共路径
         console.log("Current pathname: ", location.pathname);

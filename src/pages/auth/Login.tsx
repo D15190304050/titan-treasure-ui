@@ -8,6 +8,7 @@ import AuthKeys from '@/constants/AuthConstants';
 import { useUserSessionStore } from '@/stores/userStore';
 
 const { Title, Text } = Typography;
+const env = import.meta.env;
 
 // 登录页面组件
 const Login: React.FC = () =>
@@ -72,15 +73,10 @@ const Login: React.FC = () =>
         // 设置加载状态为true，显示加载动画
         setGithubLoading(true);
         
-        const width = 500;
-        const height = 600;
-        const left = window.screen.width / 2 - width / 2;
-        const top = window.screen.height / 2 - height / 2;
-
+        // 在新标签页中打开GitHub OAuth2登录页面
         const authWindow = window.open(
-            'http://localhost:23651/oauth2/authorization/github',
-            'GitHub Login',
-            `width=${width},height=${height},left=${left},top=${top}`
+            env.VITE_IAM_BASE_URL + '/oauth2/authorization/github',
+            '_blank'
         );
 
         // 监听消息
