@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import AuthKeys from '@/constants/AuthConstants';
@@ -7,9 +7,16 @@ import { useUserSessionStore } from '@/stores/userStore';
 const OAuth2Callback: React.FC = () =>
 {
     const navigate = useNavigate();
+    const hasRun = useRef(false);
 
     useEffect(() =>
     {
+        // Prevent useEffect from running twice in StrictMode.
+        if (hasRun.current) {
+            return;
+        }
+        hasRun.current = true;
+
         // 获取当前 URL 中的参数
         const urlParams = new URLSearchParams(window.location.search);
         const token = urlParams.get('token');
