@@ -16,10 +16,10 @@ const OAuth2Callback: React.FC = () =>
         const email = urlParams.get('email');
         const username = urlParams.get('username');
 
-        console.log("Received parameters:");
-        console.log("token = ", token);
-        console.log("email = ", email);
-        console.log("username = ", username);
+        // console.log("Received parameters:");
+        // console.log("token = ", token);
+        // console.log("email = ", email);
+        // console.log("username = ", username);
         
         // 检查opener是否存在
         if (!window.opener) {
@@ -39,7 +39,7 @@ const OAuth2Callback: React.FC = () =>
         else if (email && username)
         {
             // 弹出确认对话框询问用户是否要注册
-            const shouldRegister = confirm(`检测到您是新用户，邮箱：${email}，用户名：${username}。是否要注册？`);
+            const shouldRegister = confirm(`Detected that you are a new user with email: ${email} and username: ${username}. Do you want to register?`);
             
             if (shouldRegister)
             {
@@ -61,15 +61,15 @@ const OAuth2Callback: React.FC = () =>
         else
         {
             // 其他错误情况
-            window.opener?.postMessage({ type: 'AUTH_ERROR', message: '未接收到有效的参数' }, '*');
+            window.opener?.postMessage({ type: 'AUTH_ERROR', message: 'No valid parameters received' }, '*');
             window.close();
         }
     }, [navigate]);
 
     return (
         <div style={{ textAlign: 'center', padding: '20px' }}>
-            <h2>处理登录中...</h2>
-            <p>请稍候，不要关闭此窗口。</p>
+            <h2>Processing login...</h2>
+            <p>Please wait, do not close this window.</p>
         </div>
     );
 };

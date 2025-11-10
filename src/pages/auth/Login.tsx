@@ -39,7 +39,7 @@ const Login: React.FC = () =>
             if (loginStateTokenInfoResponse.success !== true)
             {
                 // 如果登录失败，显示错误消息
-                message.error(loginStateTokenInfoResponse.message || '登录失败，请检查用户名和密码');
+                message.error(loginStateTokenInfoResponse.message || 'Login failed, please check your username and password');
                 return;
             }
 
@@ -58,7 +58,7 @@ const Login: React.FC = () =>
         // 捕获网络或其他异常错误
         catch (error)
         {
-            message.error('登录失败，请检查用户名和密码');
+            message.error('Login failed, please check your username and password');
         }
         // 无论成功或失败，最后都要关闭加载状态
         finally
@@ -76,7 +76,8 @@ const Login: React.FC = () =>
         // 在新标签页中打开GitHub OAuth2登录页面
         const authWindow = window.open(
             // env.VITE_IAM_BASE_URL + '/oauth2/authorization/github',
-            env.VITE_IAM_BASE_URL + '/debug/oauth2/login-success',
+            // env.VITE_IAM_BASE_URL + '/debug/oauth2/login-success',
+            env.VITE_IAM_BASE_URL + '/debug/oauth2/login-not-registered',
             '_blank'
         );
 
@@ -138,7 +139,7 @@ const Login: React.FC = () =>
                 // 移除事件监听器
                 window.removeEventListener('message', handleMessage);
             } else if (event.data.type === 'AUTH_ERROR') {
-                message.error('登录失败：' + event.data.message);
+                message.error('Login failed: ' + event.data.message);
                 setGithubLoading(false);
                 authWindow?.close();
                 window.removeEventListener('message', handleMessage);

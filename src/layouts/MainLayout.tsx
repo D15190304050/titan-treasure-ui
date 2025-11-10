@@ -20,6 +20,7 @@ import
 import type { MenuProps } from 'antd';
 import AuthKeys from '@/constants/AuthConstants';
 import Authenticated from '@/components/Authenticated';
+import { useUserSessionStore } from '@/stores/userStore';
 
 const { Sider, Content, Header } = Layout;
 const { Title } = Typography;
@@ -31,6 +32,7 @@ const MainLayout: React.FC = () =>
     const [collapsed, setCollapsed] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
+    const { isAuthenticated } = useUserSessionStore();
     const {
         token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken();
@@ -74,6 +76,11 @@ const MainLayout: React.FC = () =>
     {
         // TODO: 实现登出逻辑
         localStorage.removeItem(AuthKeys.AccessToken);
+        
+        // 同时更新zustand store中的认证状态
+        const { setToken, setIsAuthenticated } = useUserSessionStore.getState();
+        setToken('');
+        setIsAuthenticated(false);
         navigate(AuthKeys.LoginUrl, { replace: true });
     };
 
@@ -128,14 +135,16 @@ const MainLayout: React.FC = () =>
                             boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
                         }}
                     >
-                        <Button 
-                            type="text" 
-                            icon={<LogoutOutlined />} 
-                            onClick={handleLogout}
-                            size="large"
-                        >
-                            注销登录
-                        </Button>
+                        {isAuthenticated && (
+                            <Button 
+                                type="text" 
+                                icon={<LogoutOutlined />} 
+                                onClick={handleLogout}
+                                size="large"
+                            >
+                                注销登录
+                            </Button>
+                        )}
                     </Header>
                     <Content
                         style={{
