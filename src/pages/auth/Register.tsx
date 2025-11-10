@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import
 {
     Form,
@@ -48,9 +48,15 @@ const Register: React.FC = () =>
     const [loading, setLoading] = useState(false);
     const [form] = Form.useForm();
     const navigate = useNavigate();
+    const location = useLocation();
     const [fileList, setFileList] = useState<UploadFile[]>([]);
     const [avatarUrl, setAvatarUrl] = useState<string>('');
     const [imageUrl, setImageUrl] = useState<string>('');
+
+    // 从URL参数中获取初始值
+    const urlParams = new URLSearchParams(location.search);
+    const initialEmail = urlParams.get('email') || '';
+    const initialUsername = urlParams.get('username') || '';
 
     const onFinish = async (values: RegisterRequest) =>
     {
@@ -211,6 +217,10 @@ const Register: React.FC = () =>
                     onFinish={onFinish}
                     layout="vertical"
                     scrollToFirstError
+                    initialValues={{
+                        email: initialEmail,
+                        username: initialUsername
+                    }}
                 >
                     {/* 头像单独一行，居中显示 */}
                     <Row justify="center" style={{ marginBottom: '16px' }}>

@@ -17,7 +17,7 @@ const Authenticated: React.FC<AuthenticatedProps> = ({ children }) =>
     const hasValidatedToken = useRef(false);
 
     // 定义不需要认证的公共路径
-    const publicPaths = ['/login', '/register', '/forgot-password', '/oauth2/**'];
+    const publicPaths = ['/login', '/register', '/forgot-password', '/oauth2/callback'];
 
     useEffect(() =>
     {

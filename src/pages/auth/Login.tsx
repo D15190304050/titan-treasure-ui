@@ -75,28 +75,58 @@ const Login: React.FC = () =>
         
         // 在新标签页中打开GitHub OAuth2登录页面
         const authWindow = window.open(
-            env.VITE_IAM_BASE_URL + '/oauth2/authorization/github',
+            // env.VITE_IAM_BASE_URL + '/oauth2/authorization/github',
+            env.VITE_IAM_BASE_URL + '/debug/oauth2/login-success',
             '_blank'
         );
 
         // 监听消息
         const handleMessage = (event: MessageEvent) => {
-            if (event.origin !== window.location.origin) return; // 安全检查
+            console.log("event = ", event);
+
+            if (event.origin !== window.location.origin)
+                return; // 安全检查
 
             if (event.data.type === 'AUTH_SUCCESS') {
-                const token = event.data.token;
+                const token: string = event.data.token;
                 localStorage.setItem(AuthKeys.AccessToken, token);
                 
                 // 同时更新zustand store中的认证状态
+                // Set isAuthenticated to false, because the token is not valid yet.
+                // The token will be validated in the <Authenticated> component.
                 const { setToken, setIsAuthenticated } = useUserSessionStore.getState();
                 setToken(token);
-                setIsAuthenticated(true);
+                setIsAuthenticated(false);
                 
                 // 关闭加载状态
                 setGithubLoading(false);
                 
                 // 登录成功后跳转到个人资料页面
                 navigate('/profile');
+                
+                // 关闭授权窗口
+                authWindow?.close();
+                
+                // 移除事件监听器
+                window.removeEventListener('message', handleMessage);
+            } else if (event.data.type === 'REDIRECT_TO_REGISTER') {
+                // 新用户需要注册，跳转到注册页面并传递用户名和邮箱
+                const { email, username } = event.data;
+                
+                // 关闭加载状态
+                setGithubLoading(false);
+                
+                // 关闭授权窗口
+                authWindow?.close();
+                
+                // 移除事件监听器
+                window.removeEventListener('message', handleMessage);
+                
+                // 跳转到注册页面，并将用户名和邮箱作为URL参数传递
+                navigate(`/register?email=${encodeURIComponent(email)}&username=${encodeURIComponent(username)}`);
+            } else if (event.data.type === 'AUTH_CANCEL') {
+                // 用户取消注册，关闭加载状态
+                setGithubLoading(false);
                 
                 // 关闭授权窗口
                 authWindow?.close();
