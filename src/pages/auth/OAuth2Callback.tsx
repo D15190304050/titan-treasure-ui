@@ -16,16 +16,23 @@ const OAuth2Callback: React.FC = () =>
         const email = urlParams.get('email');
         const username = urlParams.get('username');
 
+        console.log("Received parameters:");
         console.log("token = ", token);
         console.log("email = ", email);
         console.log("username = ", username);
         
+        // 检查opener是否存在
+        if (!window.opener) {
+            console.error("No window opener found");
+            window.close();
+            return;
+        }
+        
         // 情况1: 已注册用户，后端返回了token
         if (token)
         {
-            alert(`登录成功，您的 token 是：${token}`);
             // 将 Token 发送给主页面
-            window.opener?.postMessage({ type: 'AUTH_SUCCESS', token }, window.location.origin);
+            window.opener?.postMessage({ type: 'AUTH_SUCCESS', token }, '*');
             window.close(); // 关闭弹窗
         }
         // 情况2: 新用户，后端返回了email和username
@@ -41,20 +48,20 @@ const OAuth2Callback: React.FC = () =>
                     type: 'REDIRECT_TO_REGISTER', 
                     email, 
                     username 
-                }, window.location.origin);
+                }, '*');
                 window.close(); // 关闭弹窗
             }
             else
             {
                 // 用户选择不注册，关闭窗口并返回到登录页面
-                window.opener?.postMessage({ type: 'AUTH_CANCEL' }, window.location.origin);
+                window.opener?.postMessage({ type: 'AUTH_CANCEL' }, '*');
                 window.close();
             }
         }
         else
         {
             // 其他错误情况
-            window.opener?.postMessage({ type: 'AUTH_ERROR', message: '未接收到有效的参数' }, window.location.origin);
+            window.opener?.postMessage({ type: 'AUTH_ERROR', message: '未接收到有效的参数' }, '*');
             window.close();
         }
     }, [navigate]);

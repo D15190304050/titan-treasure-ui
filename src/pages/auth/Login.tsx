@@ -84,8 +84,12 @@ const Login: React.FC = () =>
         const handleMessage = (event: MessageEvent) => {
             console.log("event = ", event);
 
-            if (event.origin !== window.location.origin)
-                return; // 安全检查
+            // 安全检查：检查origin是否匹配IAM服务地址
+            const iamBaseUrl = env.VITE_IAM_BASE_URL;
+            if (event.origin !== window.location.origin && event.origin !== iamBaseUrl) {
+                console.log(`Origin mismatch. Expected ${window.location.origin} or ${iamBaseUrl}, but got ${event.origin}`);
+                return;
+            }
 
             if (event.data.type === 'AUTH_SUCCESS') {
                 const token: string = event.data.token;
