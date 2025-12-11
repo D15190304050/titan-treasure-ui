@@ -55,14 +55,14 @@ const Login: React.FC = () =>
             // 登录成功后跳转到个人资料页面
             navigate('/profile');
         }
-        // 捕获网络或其他异常错误
         catch (error)
         {
+            // 捕获网络或其他异常错误
             message.error('Login failed, please check your username and password');
         }
-        // 无论成功或失败，最后都要关闭加载状态
         finally
         {
+            // 无论成功或失败，最后都要关闭加载状态
             setLoading(false);
         }
     };
