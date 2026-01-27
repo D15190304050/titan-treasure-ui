@@ -32,6 +32,16 @@ export default defineConfig(({mode}) => {
                             },
                             // rewrite: (path) => path.replace(/^\/api/, "")
                         }
+                        ,
+                    "/auth":
+                        {
+                            target: env.VITE_API_URL,
+                            changeOrigin: true,
+                            headers: {
+                                Host: env.VITE_HOST
+                            },
+                            rewrite: (path) => path.replace(/^\/auth/, "/api")
+                        }
                 }
         }
     }
