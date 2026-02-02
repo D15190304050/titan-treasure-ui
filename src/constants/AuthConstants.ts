@@ -3,7 +3,7 @@ const AuthKeys = {
     RefreshToken: 'titan_refresh_token',
     ExpirationInSeconds: 'expiration_in_seconds',
     LoginUrl: import.meta.env.VITE_LOGIN_PAGE_URL || 'http://localhost:3730',
-    RedirectUrl: 'redirect',
+    RedirectUrl: 'redirectUrl',
     HeaderUserId: "X-User-Id",
     HeaderUserName: "X-User-Name",
     HeaderUserNickname: "X-User-Nickname",

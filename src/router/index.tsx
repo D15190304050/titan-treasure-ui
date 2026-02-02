@@ -1,5 +1,6 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import MainLayout from '@/layouts/MainLayout';
+import AuthGuard from '@/components/AuthGuard';
 
 import Profile from '@/pages/profile/Profile';
 import EditProfile from '@/pages/profile/EditProfile';
@@ -14,7 +15,11 @@ import PrivacySettings from '@/pages/settings/PrivacySettings';
 export const router = createBrowserRouter([
     {
         path: '/',
-        element: <MainLayout />,
+        element: (
+            <AuthGuard>
+                <MainLayout />
+            </AuthGuard>
+        ),
         children: [
             {
                 index: true,
