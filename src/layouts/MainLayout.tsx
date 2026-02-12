@@ -81,7 +81,9 @@ const MainLayout: React.FC = () =>
         const { setToken, setIsAuthenticated } = useUserSessionStore.getState();
         setToken('');
         setIsAuthenticated(false);
-        navigate(AuthKeys.LoginUrl, { replace: true });
+
+        // TODO: Invalidate the token in the backend.
+        // window.location.href = AuthKeys.LoginUrl;
     };
 
     const siderContent = (
